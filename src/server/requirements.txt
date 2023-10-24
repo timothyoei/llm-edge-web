@@ -1,1 +1,4 @@
 Flask
+Flask-PyMongo
+flasgger
+python-dotenv
