@@ -51,14 +51,16 @@ def signup():
           chatHistory:
             type: array
             items:
-              type: object
-              properties:
-                query:
-                  type: string
-                  description: The chatbot input text
-                response:
-                  type: string
-                  description: The chatbot output text
+              type: array
+              items:
+                type: object
+                properties:
+                  query:
+                    type: string
+                    description: The chatbot input text
+                  response:
+                    type: string
+                    description: The chatbot output text
           theme:
             type: string
             description: The user's theme preference
@@ -95,15 +97,12 @@ def signup_post():
   if db.Users.find_one({"email": data["email"]}):
     return jsonify({"error": "User already exists"}), 400
 
-  hashed_password = generate_password_hash(data["password"])
-  print(hashed_password)
-
   # Create a new user
   new_user = {
     "email": data["email"],
     "fName": data["fName"],
     "lName": data["lName"],
-    "password": hashed_password,
+    "password": generate_password_hash(data["password"]),
     "chatHistory": [],
     "theme": "dark"
   }

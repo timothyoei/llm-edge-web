@@ -43,14 +43,16 @@ def login():
           chatHistory:
             type: array
             items:
-              type: object
-              properties:
-                query:
-                  type: string
-                  description: The chatbot input text
-                response:
-                  type: string
-                  description: The chatbot output text
+              type: array
+              items:
+                type: object
+                properties:
+                  query:
+                    type: string
+                    description: The chatbot input text
+                  response:
+                    type: string
+                    description: The chatbot output text
           theme:
             type: string
             description: The user's theme preference
