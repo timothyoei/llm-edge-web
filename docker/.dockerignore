@@ -1,6 +1,6 @@
 .git
-*.gitignore
-*.next
-*/node_modules
-*/cache
-*/__pycache__
+**.gitignore
+**.next
+**/node_modules
+**/cache
+**/__pycache__

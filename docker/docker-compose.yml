@@ -10,3 +10,16 @@ services:
     volumes:
       - ..:/app
     tty: true
+  # db:
+  #   container_name: db
+  #   image: mongo
+  #   environment:
+  #     INITDB_ROOT_USER: user
+  #     INITDB_ROOT_PASS: pass
+  #   build:
+  #     context: ..
+  #     dockerfile: docker/db.Dockerfile
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - ../data:/data
