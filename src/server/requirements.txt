@@ -3,3 +3,4 @@ Flask-PyMongo
 flasgger
 python-dotenv
 Flask-JWT-Extended
+Flask-Mail
