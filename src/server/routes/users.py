@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash
-from utils import get_db
+from utils import get_db, is_valid_email, send_verification_email
+from bson.objectid import ObjectId
 
 users_bp = Blueprint("users", __name__)
 
@@ -67,25 +68,70 @@ def users_post_handler():
     if not data.get(f):
       return jsonify({"error": f"{f} field missing"}), 400
 
+  # Validate email
+  if not is_valid_email(data["email"]):
+    return jsonify({"error": "Invalid email"}), 400
+
   # Check if the user already exists
   db = get_db()
   if db.Users.find_one({"email": data["email"]}):
     return jsonify({"error": "User already exists"}), 400
 
   # Create a new user
+  confirm_token = generate_password_hash(data["email"])
   new_user = {
     "email": data["email"],
     "password": generate_password_hash(data["password"]),
-    "isActive": False,
+    "isConfirmed": False,
+    "confirmToken": confirm_token,
     "theme": "dark"
   }
   try:
-    db.Users.insert_one(new_user)
+    res_users_insert = db.Users.insert_one(new_user)
   except Exception as e:
-    print(f"An error occurred while inserting the user: {e}")
-    return jsonify({'error': 'Server error'}), 500
+    return jsonify({"error": "Server error"}), 500
   
-  del_fields = ["_id", "password", "isActive"]
+  # Remove unnecessary fields from response
+  del_fields = ["password", "isConfirmed"]
   for f in del_fields:
     new_user.pop(f)
+  new_user["_id"] = str(res_users_insert.inserted_id)
+  
   return jsonify(new_user), 201
+
+@users_bp.route("/users/<string:user_id>/verify", methods=["POST"])
+def user_verify(user_id):
+  """
+  Endpoint for user verification
+  ---
+  parameters:
+    - in: path
+      name: user_id
+      required: true
+      description: The ID of the user being verified
+      type: string
+  responses:
+    200:
+      description: Successfully sent user verification email
+      schema:
+        properties:
+          message:
+            type: string
+            description: Indication of successful email delivery
+    500:
+      description: Internal server error
+      schema:
+        properties:
+          error:
+            type: string
+            description: Error message
+  """
+  if request.method == "POST":
+    return user_verify_post_handler(user_id)
+
+def user_verify_post_handler(user_id):
+  db = get_db()
+  res_users_find = db.Users.find_one({"_id": ObjectId(user_id)})
+  if not send_verification_email(res_users_find["email"], res_users_find["confirmToken"]):
+    return jsonify({"error": "Server error"}), 500
+  return jsonify({"message": "Verification email sent"}), 200
