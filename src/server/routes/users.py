@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
-from db import get_db
 from werkzeug.security import generate_password_hash
+from utils import get_db
 
-signup_bp = Blueprint("signup", __name__)
+users_bp = Blueprint("users", __name__)
 
-@signup_bp.route("/signup", methods=["POST"])
-def signup():
+@users_bp.route("/users", methods=["POST"])
+def users():
   """
-  Endpoint for user signups
+  Endpoint for users
   ---
   consumes:
     - application/json
@@ -18,19 +18,13 @@ def signup():
       schema:
         required:
           - email
+          - password
           - fName
           - lName
-          - password
         properties:
           email:
             type: string
             description: The user's email
-          fName:
-            type: string
-            description: The user's first name
-          lName:
-            type: string
-            description: The user's last name
           password:
             type: string
             description: The user's password
@@ -42,25 +36,6 @@ def signup():
           email:
             type: string
             description: The user's email
-          fName:
-            type: string
-            description: The user's first name
-          lName:
-            type: string
-            description: The user's last name
-          chatHistory:
-            type: array
-            items:
-              type: array
-              items:
-                type: object
-                properties:
-                  query:
-                    type: string
-                    description: The chatbot input text
-                  response:
-                    type: string
-                    description: The chatbot output text
           theme:
             type: string
             description: The user's theme preference
@@ -80,14 +55,14 @@ def signup():
             description: Error message
   """
   if request.method == "POST":
-    return signup_post()
+    return users_post_handler()
 
-def signup_post():
+def users_post_handler():
   # Validate incoming data
   data = request.get_json()
   if not data:
     return jsonify({"error": "Data missing"}), 400
-  req_fields = ["email", "fName", "lName", "password"]
+  req_fields = ["email","password"]
   for f in req_fields:
     if not data.get(f):
       return jsonify({"error": f"{f} field missing"}), 400
@@ -100,10 +75,8 @@ def signup_post():
   # Create a new user
   new_user = {
     "email": data["email"],
-    "fName": data["fName"],
-    "lName": data["lName"],
     "password": generate_password_hash(data["password"]),
-    "chatHistory": [],
+    "isActive": False,
     "theme": "dark"
   }
   try:
@@ -112,7 +85,7 @@ def signup_post():
     print(f"An error occurred while inserting the user: {e}")
     return jsonify({'error': 'Server error'}), 500
   
-  del_fields = ["_id", "password"]
+  del_fields = ["_id", "password", "isActive"]
   for f in del_fields:
     new_user.pop(f)
   return jsonify(new_user), 201
