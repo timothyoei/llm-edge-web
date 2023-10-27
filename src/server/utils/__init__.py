@@ -9,9 +9,6 @@ from routes import register_routes
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash
 import re
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
 
 # ============================================
 # DATABASE HELPERS
