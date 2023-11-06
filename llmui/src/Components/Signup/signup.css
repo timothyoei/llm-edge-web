@@ -1,4 +1,5 @@
 
+
 .container{
     background: whitesmoke; 
     display: flex;
@@ -37,11 +38,11 @@
 }
 
 .inputs{
-   
-    margin: auto;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     gap:20px;
+    color: black;
     
     
 }
@@ -112,8 +113,11 @@
     
 }
 
-.NoAccount{
-    color: black;
+
+.NoAccount span Link{
+    text-decoration: none;
+    color:black;
+
 }
 
 .NoAccount span{
