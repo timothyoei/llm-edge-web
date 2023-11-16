@@ -4,6 +4,7 @@
     background: whitesmoke; 
     display: flex;
     flex-direction: column;
+    margin-top: 20px;
     margin: auto;
     margin-top: 75px;
     padding-bottom: 30px;

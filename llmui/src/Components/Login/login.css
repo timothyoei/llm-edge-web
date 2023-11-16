@@ -3,8 +3,8 @@
     background: whitesmoke; 
     display: flex;
     flex-direction: column;
-    margin: auto;
-    margin-top: 75px;
+    
+    margin:auto;
     padding-bottom: 30px;
     
     align-items: center;
@@ -37,7 +37,7 @@
 }
 
 .inputs{
-   
+    margin-top: 20px;
     margin: auto;
     display: flex;
     flex-direction: column;
@@ -92,6 +92,7 @@
     display:flex;
     gap: 30px;
     margin:60px auto;
+    justify-content:center;
 }
 
 .submit{
